@@ -3,8 +3,6 @@ import collections
 import contextlib
 import sqlite3
 
-DATABASE = 'tmp.db'
-
 Baby = collections.namedtuple(
     'Baby', ['id', 'name'])
 
@@ -18,7 +16,7 @@ class DBModel(object):
     def connect(app, autocommit=True):
         con = None
         try:
-            con = sqlite3.connect(DATABASE)
+            con = sqlite3.connect(app.config['DBNAME'])
             yield DBModel(con)
             if autocommit:
                 con.commit()
