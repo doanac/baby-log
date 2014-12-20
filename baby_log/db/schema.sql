@@ -1,0 +1,18 @@
+CREATE TABLE babies(
+	id	INTEGER PRIMARY KEY NOT NULL,
+	name	VARCHAR(1024) NOT NULL UNIQUE
+);
+CREATE TABLE entry_type(
+	id	INTEGER PRIMARY KEY NOT NULL,
+	label	VARCHAR(1024) NOT NULL UNIQUE,
+	supports_duration	INTEGER
+);
+CREATE TABLE entries(
+	id		INTEGER PRIMARY KEY NOT NULL,
+	baby		INTEGER,
+	entry_type	INTEGER,
+	started		DATETIME NOT NULL,
+	ended		DATETIME,
+	FOREIGN KEY(baby) REFERENCES baby(id)
+	FOREIGN KEY(entry_type) REFERENCES entry_type(id)
+);

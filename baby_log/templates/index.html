@@ -1,0 +1,49 @@
+<html>
+<head>
+  <title>Baby Log</title>
+
+  <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+  <link href="//cdn.datatables.net/1.10.2/css/jquery.dataTables.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/datatables-tabletools/2.1.5/css/TableTools.min.css" rel="stylesheet">
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+  <script>
+$(document).ready(function() {
+  $.ajax({
+    type: "GET",
+    url: "/api/v1/babies/",
+    contentType: "application/json; charset=utf-8",
+    success: function (result) {
+      $.each(result.babies, function(index, baby){
+        $('#babies').append('<li class="list-group-item"><a href="./babies/' + baby.name + '/">' + baby.name + '</a></li>');
+      });
+    },
+    error: function (result) {
+      alert('TODO ERROR' + result);
+    }
+  });
+});
+  </script>
+
+</head>
+
+<body>
+<div class="container">
+  <nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+      <div class="navbar-header">
+            <a class="navbar-brand" href="#">Baby Log</a>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<div class="container">
+<ul id="babies" class="list-group">
+</ul>
+</div>
+
+</body>
+</html>
