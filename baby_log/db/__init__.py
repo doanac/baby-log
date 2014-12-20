@@ -8,8 +8,9 @@ def db_create(app, babies=[]):
 
         model.add_entry_type('bottle', True)
         model.add_entry_type('sleep', True)
-        model.add_entry_type('wet-diaper', False)
-        model.add_entry_type('poop-diaper', False)
+        model.add_entry_type('tummy time', True)
+        model.add_entry_type('wet diaper', False)
+        model.add_entry_type('poop diaper', False)
 
         for baby in babies:
             model.add_baby(baby)
