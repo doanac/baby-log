@@ -63,6 +63,14 @@ class DBModel(object):
             started = datetime.datetime.now()
         return self._execute(cmd, (baby, entry_type, started, ended)).lastrowid
 
+    def stop_last_entry(self, baby, entry_type):
+        ended = datetime.datetime.now()
+        stmt = ('UPDATE entries SET ended=? '
+                'WHERE baby=? and entry_type=? and '
+                ' (ended is null or ended="") '
+                'ORDER BY started DESC LIMIT 1')
+        return self._execute(stmt, (ended, baby, entry_type)).rowcount == 1
+
     def entries(self, order='DESC', order_by='started', **kwargs):
         stmt = 'SELECT id,baby,entry_type,started,ended from entries '
         if kwargs:

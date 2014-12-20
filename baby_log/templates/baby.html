@@ -40,7 +40,24 @@ function on_start(id) {
 }
 
 function on_stop(id) {
-  alert('TODO onstop');
+  var data = {
+    'baby': {{baby_id}},
+    'entry_type': id,
+    'action': 'stop_last'
+  };
+  $.ajax({
+    type: 'PUT',
+    url: '/api/v1/babies/{{baby_id}}/entries/',
+    data: JSON.stringify(data),
+    contentType: 'application/json',
+    dataType: 'json',
+    success: function(data) {
+      location.reload();
+    },
+    error: function (xhr, ajaxOptions, thrownError) {
+        alert('TODO ' + xhr.response_text);
+    }
+  });
 }
 
 $(document).ready(function() {
@@ -59,6 +76,9 @@ $(document).ready(function() {
       },
       {
         "render": function (data, type, row) {
+	  if (type != 'display' )
+	    return data;
+
           var ts = moment(data);
           var diff = now - ts;
           var fmt = 'hh:mm:ss A';
@@ -71,6 +91,14 @@ $(document).ready(function() {
 	  return ts.format(fmt);
         },
         "targets": 1
+      },
+      {
+        "render": function (data, type, row) {
+	  if (!data || type != 'display' )
+	    return data;
+          return moment(data).format('hh:mm:ss');
+        },
+        "targets": 2
       },
     ],
     "columns": [

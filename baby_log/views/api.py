@@ -43,3 +43,17 @@ def baby_entry_create_by_id(id):
         resp.status_code = 201
         resp.headers['Location'] = 'todo_' + str(id)
         return resp
+
+
+@app.route('/api/v1/babies/<int:id>/entries/', methods=['PUT'])
+def baby_entries_update(id):
+    if request.json['action'] != 'stop_last':
+        resp = jsonify({})
+        resp.status_code = 500
+        return resp
+    with DBModel.connect(app) as db:
+        passed = db.stop_last_entry(id, request.json['entry_type'])
+        resp = jsonify({})
+        if not passed:
+            resp.status_code = 500
+        return resp
