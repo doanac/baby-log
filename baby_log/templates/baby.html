@@ -42,13 +42,11 @@ function on_start(id) {
 
 function on_stop(id) {
   var data = {
-    'baby': {{baby_id}},
-    'entry_type': id,
-    'action': 'stop_last'
+    'ended': moment().toISOString()
   };
   $.ajax({
     type: 'PUT',
-    url: '/api/v1/babies/{{baby_id}}/entries/',
+    url: '/api/v1/babies/{{baby_id}}/entries/' + id + '/',
     data: JSON.stringify(data),
     contentType: 'application/json',
     dataType: 'json',
@@ -77,8 +75,8 @@ $(document).ready(function() {
       },
       {
         "render": function (data, type, row) {
-	  if (type != 'display' )
-	    return data;
+          if (type != 'display' )
+            return data;
 
           var ts = moment(data);
           var diff = now - ts;
@@ -86,17 +84,24 @@ $(document).ready(function() {
           if (diff > 1000*60*60*24*7) {
             fmt += ' ddd, MMM Do';
           }
-          else if (diff > 1000*60*60*24) {
+          else if (ts.day() != now.day()) {
             fmt += ' ddd';
           }
-	  return ts.format(fmt);
+          return ts.format(fmt);
         },
         "targets": 1
       },
       {
         "render": function (data, type, row) {
-	  if (!data || type != 'display' )
-	    return data;
+          if ( type != 'display' )
+            return data;
+          if ( !data ) {
+            if (entry_types[row.entry_type].supports_duration) {
+              var val = '<button type="button" onclick="on_stop(' + row.id + ');" class="btn btn-sm btn-danger">end now</button>';
+	      return val;
+            }
+            return data;
+          }
           return moment(data).format('hh:mm:ss');
         },
         "targets": 2
@@ -124,11 +129,17 @@ $(document).ready(function() {
     </div>
   </nav>
 </div>
-<div class="container"> <p> {% for entry_type in entry_types %}
+<div class="container">
+  <p>
+  {% for entry_type in entry_types %}
     {% if entry_type.supports_duration %}
     <button type="button" onclick="on_start({{entry_type.id}});" class="btn btn-success">Start {{entry_type.label}}</button>
-    <button type="button" onclick="on_stop({{entry_type.id}});" class="btn btn-danger">End last {{entry_type.label}}</button>
-    {% else %}
+    {% endif %}
+  {% endfor %}
+  </p>
+  <p>
+  {% for entry_type in entry_types %}
+    {% if not entry_type.supports_duration %}
     <button type="button" onclick="on_start({{entry_type.id}});" class="btn btn-primary">Add {{entry_type.label}}</button>
     {% endif %}
   {% endfor %}

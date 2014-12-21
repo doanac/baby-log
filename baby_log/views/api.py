@@ -45,15 +45,8 @@ def baby_entry_create_by_id(id):
         return resp
 
 
-@app.route('/api/v1/babies/<int:id>/entries/', methods=['PUT'])
-def baby_entries_update(id):
-    if request.json['action'] != 'stop_last':
-        resp = jsonify({})
-        resp.status_code = 500
-        return resp
+@app.route('/api/v1/babies/<int:baby>/entries/<int:id>/', methods=['PUT'])
+def baby_entries_update(baby, id):
     with DBModel.connect(app) as db:
-        passed = db.stop_last_entry(id, request.json['entry_type'])
-        resp = jsonify({})
-        if not passed:
-            resp.status_code = 500
-        return resp
+        db.update_entry(id, request.json)
+        return jsonify({})
