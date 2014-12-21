@@ -80,7 +80,7 @@ $(document).ready(function() {
 
           var ts = moment(data);
           var diff = now - ts;
-          var fmt = 'hh:mm:ss A';
+          var fmt = 'hh:mm A';
           if (diff > 1000*60*60*24*7) {
             fmt += ' ddd, MMM Do';
           }
@@ -102,7 +102,8 @@ $(document).ready(function() {
             }
             return data;
           }
-          return moment(data).format('hh:mm:ss');
+          var minutes = (moment(data) - moment(row.started)) / 60000;
+          return Math.round(minutes) + ' minutes';
         },
         "targets": 2
       },
