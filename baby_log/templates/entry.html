@@ -1,0 +1,81 @@
+<html>
+<head>
+  <title>Baby Log Entry - {{baby_name}}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.1.3/css/bootstrap-datetimepicker.min.css" rel=stylesheet">
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+  <script src="///cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
+  <script src="///cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.1.3/js/bootstrap-datetimepicker.min.js"></script>
+
+  <script>
+
+$(document).ready(function() {
+  $('#started').datetimepicker();
+  $('#ended').datetimepicker();
+
+  $("#entry_form").submit(function(event){
+    event.preventDefault();
+    var data = {
+      'started': moment($("#started_txt").val()).toISOString()
+    };
+    if ($("#ended_txt").val()) {
+      data['ended'] = moment($("#ended_txt").val()).toISOString();
+    }
+    $.ajax({
+      type: 'PATCH',
+      url: '/api/v1/babies/{{baby_id}}/entries/{{entry_id}}/',
+      data: JSON.stringify(data),
+      contentType: 'application/json',
+      dataType: 'json',
+      success: function(data) {
+        window.location.href = '../..';
+      },
+      error: function (xhr, ajaxOptions, thrownError) {
+        alert('TODO ' + xhr.response_text);
+      }
+    });
+    return true;
+  });
+});
+  </script>
+<body>
+<div class="container">
+  <nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+      <div class="navbar-header">
+            <a class="navbar-brand" href="#">Baby Log for {{baby_name}}</a>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<div class="container" role="main">
+  <form id="entry_form" role="form">
+    <div class="form-group">
+      <label>Entry type: {{entry_type}}</label>
+    </div>
+    <div class="form-group">
+      <label for"started">Started</label>
+      <div class='input-group date' id='started'>
+        <input type='text' id='started_txt' class="form-control" value="{{started}}"/>
+        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for"ended">Ended</label>
+      <div class='input-group date' id='ended'>
+        <input type='text' id='ended_txt' class="form-control" value="{{ended}}"/>
+        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-default" onclick="update()">Update</button>
+  </form>
+</div>
+
+</body>
+</html>
+

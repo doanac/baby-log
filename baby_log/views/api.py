@@ -45,7 +45,7 @@ def baby_entry_create_by_id(id):
         return resp
 
 
-@app.route('/api/v1/babies/<int:baby>/entries/<int:id>/', methods=['PUT'])
+@app.route('/api/v1/babies/<int:baby>/entries/<int:id>/', methods=['PATCH'])
 def baby_entries_update(baby, id):
     with DBModel.connect(app) as db:
         db.update_entry(id, request.json)

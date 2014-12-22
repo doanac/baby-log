@@ -3,6 +3,8 @@ import collections
 import contextlib
 import sqlite3
 
+import dateutil.parser
+
 Baby = collections.namedtuple(
     'Baby', ['id', 'name'])
 
@@ -61,10 +63,25 @@ class DBModel(object):
             started = datetime.datetime.now()
         return self._execute(cmd, (baby, entry_type, started, ended)).lastrowid
 
+    def get_entry(self, entry_id):
+        stmt = ('SELECT id,baby,entry_type,started,ended FROM entries '
+                'WHERE id=?')
+        row = self._execute(stmt, (entry_id,)).fetchone()
+        if not row:
+            raise LookupError('No such entry found: %d' % entry_id)
+        return {'id': row[0], 'baby': row[1], 'entry_type': row[2],
+                'started': row[3], 'ended': row[4]}
+
     def update_entry(self, entry_id, data):
         stmt = 'UPDATE entries SET '
-        stmt += ' '.join(['%s=:%s' % (x, x) for x in data.keys()])
+        stmt += ', '.join(['%s=:%s' % (x, x) for x in data.keys()])
         stmt += ' WHERE id=%d' % entry_id
+        ts = data.get('started')
+        if ts:
+            data['started'] = dateutil.parser.parse(ts)
+        ts = data.get('ended')
+        if ts:
+            data['ended'] = dateutil.parser.parse(ts)
         self._execute(stmt, data)
 
     def entries(self, order='DESC', order_by='started', **kwargs):

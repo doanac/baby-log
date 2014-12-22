@@ -69,7 +69,10 @@ $(document).ready(function() {
     "columnDefs": [
       {
         "render": function (data, type, row) {
-          return entry_types[data]['label'];
+          var lbl = entry_types[data]['label'];
+          if (type != 'display' )
+            return lbl;
+          return '<a href="entry/' + row.id + '/">' + lbl + '</a>';
         },
         "targets": 0
       },
