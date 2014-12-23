@@ -45,7 +45,7 @@ function on_stop(id) {
     'ended': moment().toISOString()
   };
   $.ajax({
-    type: 'PUT',
+    type: 'PATCH',
     url: '/api/v1/babies/{{baby_id}}/entries/' + id + '/',
     data: JSON.stringify(data),
     contentType: 'application/json',
