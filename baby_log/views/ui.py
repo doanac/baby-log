@@ -1,3 +1,5 @@
+import datetime
+
 from flask import render_template
 
 import dateutil.parser
@@ -15,10 +17,21 @@ def index():
 def baby(name):
     with DBModel.connect(app) as db:
         baby = db.get_baby(name)
+        bot = [x['id'] for x in db.entry_types() if x['label'] == 'bottle'][0]
+        days_ago = datetime.datetime.now() - datetime.timedelta(days=3)
+        count = 0
+        for e in db.entries():
+            if e['entry_type'] == bot:
+                started = e['started']
+                if started.endswith('+00:00'):
+                    started = started.rsplit('+', 1)[0]
+                if dateutil.parser.parse(started) > days_ago:
+                    count += 1
         args = {
             'baby_id': baby.id,
             'baby_name': baby.name,
             'entry_types': list(db.entry_types()),
+            'bottles_per_day': float(count) / 3.0
         }
         return render_template('baby.html', **args)
 
