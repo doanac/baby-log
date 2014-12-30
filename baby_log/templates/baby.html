@@ -35,7 +35,7 @@ function on_start(id) {
       location.reload();
     },
     error: function (xhr, ajaxOptions, thrownError) {
-        alert('TODO ' + xhr.response_text);
+      alert(xhr.statusText + ': ' + xhr.responseText);
     }
   });
 }
@@ -54,7 +54,7 @@ function on_stop(id) {
       location.reload();
     },
     error: function (xhr, ajaxOptions, thrownError) {
-        alert('TODO ' + xhr.response_text);
+      alert(xhr.statusText + ': ' + xhr.responseText);
     }
   });
 }

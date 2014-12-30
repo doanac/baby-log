@@ -21,8 +21,8 @@ $(document).ready(function() {
         $('#babies').append('<li class="list-group-item"><a href="./babies/' + baby.name + '/">' + baby.name + '</a></li>');
       });
     },
-    error: function (result) {
-      alert('TODO ERROR' + result);
+    error: function (xhr, ajaxOptions, thrownError) {
+      alert(xhr.statusText + ': ' + xhr.responseText);
     }
   });
 });
