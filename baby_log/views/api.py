@@ -50,3 +50,10 @@ def baby_entries_update(baby, id):
     with DBModel.connect(app) as db:
         db.update_entry(id, request.json)
         return jsonify({})
+
+
+@app.route('/api/v1/babies/<int:baby>/entries/<int:id>/', methods=['DELETE'])
+def baby_entry_delete(baby, id):
+    with DBModel.connect(app) as db:
+        db.delete_entry(id)
+        return jsonify({})

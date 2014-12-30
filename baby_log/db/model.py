@@ -84,6 +84,9 @@ class DBModel(object):
             data['ended'] = dateutil.parser.parse(ts)
         self._execute(stmt, data)
 
+    def delete_entry(self, entry_id):
+        self._execute('DELETE FROM entries WHERE id=?', (entry_id,))
+
     def entries(self, order='DESC', order_by='started', **kwargs):
         stmt = 'SELECT id,baby,entry_type,started,ended from entries '
         if kwargs:
