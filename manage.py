@@ -1,9 +1,14 @@
 #!/usr/bin/env python
 import argparse
+
 import dateutil.parser
 
 from baby_log import app
-from baby_log.db import db_create, DBModel
+from baby_log.db import db_create, db_migrate, DBModel
+
+
+def _migrate(args):
+    db_migrate(app)
 
 
 def _create_db(args):
@@ -35,6 +40,9 @@ if __name__ == '__main__':
     p = sub.add_parser('create-db', help='Create database.')
     p.add_argument('baby', nargs='+')
     p.set_defaults(func=_create_db)
+
+    p = sub.add_parser('migrate', help='Run db migrations')
+    p.set_defaults(func=_migrate)
 
     p = sub.add_parser('runserver', help='Run webserver')
     p.add_argument('--host', default='0.0.0.0')
