@@ -61,6 +61,9 @@ function on_stop(id) {
 
 $(document).ready(function() {
   var now = moment();
+  {% if most_recent_bottle %}
+  $('#last_bottle').text('Last Bottle: ' + moment('{{most_recent_bottle}}').fromNow());
+  {% endif %}
   $('#entries').dataTable( {
     "ajax": {
       "url": "/api/v1/babies/{{baby_id}}/entries/",
@@ -148,6 +151,10 @@ $(document).ready(function() {
     {% endif %}
   {% endfor %}
   </p>
+  {% if most_recent_bottle %}
+  <p id='last_bottle'>
+  </p>
+  {% endif %}
   <p>Bottles Per Day: {{'%0.1f' % bottles_per_day}}
   </p>
 </div>

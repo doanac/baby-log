@@ -20,16 +20,24 @@ def baby(name):
         bot = [x['id'] for x in db.entry_types() if x['label'] == 'bottle'][0]
         days_ago = DBModel.now() - datetime.timedelta(days=3)
         count = 0
+        most_recent = None
         for e in db.entries():
             if e['entry_type'] == bot:
                 started = e['started']
-                if dateutil.parser.parse(started) > days_ago:
+                ts = dateutil.parser.parse(started)
+                if most_recent:
+                    if most_recent < ts:
+                        most_recent = ts
+                else:
+                    most_recent = ts
+                if ts > days_ago:
                     count += 1
         args = {
             'baby_id': baby.id,
             'baby_name': baby.name,
             'entry_types': list(db.entry_types()),
-            'bottles_per_day': float(count) / 3.0
+            'bottles_per_day': float(count) / 3.0,
+            'most_recent_bottle': most_recent.isoformat(),
         }
         return render_template('baby.html', **args)
 
