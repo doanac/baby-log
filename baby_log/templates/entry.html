@@ -14,6 +14,13 @@
   <script>
 
 $(document).ready(function() {
+  var local = moment.utc('{{started}}').toDate()
+  $('#started_txt').val(moment(local).format('MM/DD/YYYY h:mm a'));
+  {% if ended %}
+  local = moment.utc('{{ended}}').toDate()
+  $('#ended_txt').val(moment(local).format('MM/DD/YYYY h:mm a'));
+  {% endif %}
+
   $('#started').datetimepicker();
   $('#ended').datetimepicker();
 
@@ -76,14 +83,14 @@ function delete_entry() {
     <div class="form-group">
       <label for"started">Started</label>
       <div class='input-group date' id='started'>
-        <input type='text' id='started_txt' class="form-control" value="{{started}}"/>
+        <input type='text' id='started_txt' class="form-control"/>
         <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
       </div>
     </div>
     <div class="form-group">
       <label for"ended">Ended</label>
       <div class='input-group date' id='ended'>
-        <input type='text' id='ended_txt' class="form-control" value="{{ended}}"/>
+        <input type='text' id='ended_txt' class="form-control"/>
         <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
       </div>
     </div>

@@ -18,13 +18,11 @@ def baby(name):
     with DBModel.connect(app) as db:
         baby = db.get_baby(name)
         bot = [x['id'] for x in db.entry_types() if x['label'] == 'bottle'][0]
-        days_ago = datetime.datetime.now() - datetime.timedelta(days=3)
+        days_ago = DBModel.now() - datetime.timedelta(days=3)
         count = 0
         for e in db.entries():
             if e['entry_type'] == bot:
                 started = e['started']
-                if started.endswith('+00:00'):
-                    started = started.rsplit('+', 1)[0]
                 if dateutil.parser.parse(started) > days_ago:
                     count += 1
         args = {
@@ -45,8 +43,7 @@ def baby_entry(name, id):
         started = dateutil.parser.parse(entry['started'])
         ended = entry['ended']
         if ended:
-            ended = dateutil.parser.parse(ended)
-            ended = ended.strftime('%m/%d/%Y %I:%M %p')
+            ended = dateutil.parser.parse(ended).isoformat()
         else:
             ended = ''  # so it doesn't show as "None"
         baby = db.get_baby(name)
@@ -55,7 +52,7 @@ def baby_entry(name, id):
             'baby_name': baby.name,
             'entry_type': entry_type,
             'entry_id': id,
-            'started': started.strftime('%m/%d/%Y %I:%M %p'),
+            'started': started.isoformat(),
             'ended': ended,
         }
         return render_template('entry.html', **args)

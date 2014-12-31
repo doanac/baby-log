@@ -4,6 +4,7 @@ import contextlib
 import sqlite3
 
 import dateutil.parser
+import pytz
 
 Baby = collections.namedtuple(
     'Baby', ['id', 'name'])
@@ -25,6 +26,10 @@ class DBModel(object):
         finally:
             if con:
                 con.close()
+
+    @staticmethod
+    def now():
+        return datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
 
     def _execute(self, stmt, params=None):
         if params:
@@ -60,7 +65,7 @@ class DBModel(object):
         cmd = 'INSERT INTO entries(baby, entry_type, started, ended) ' \
               'values(?,?,?,?)'
         if started is None:
-            started = datetime.datetime.now()
+            started = DBModel.now().isoformat()
         return self._execute(cmd, (baby, entry_type, started, ended)).lastrowid
 
     def get_entry(self, entry_id):

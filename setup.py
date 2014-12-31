@@ -10,6 +10,7 @@ packages = find_packages(basedir)
 requires = [
     'Flask==0.10.1',
     'python-dateutil',
+    'pytz',
 ]
 
 setup(
