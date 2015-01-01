@@ -1,3 +1,7 @@
+import datetime
+
+import dateutil.parser
+
 from flask import jsonify, request
 
 from baby_log import app
@@ -18,9 +22,55 @@ def babies_list():
         return jsonify({'babies': babies})
 
 
+def _reporting_loop(report_types, data, entry):
+    entry_type = data['entry_types'][entry['entry_type']]
+    reports = report_types.get(entry_type)
+    if not reports:
+        return
+
+    started = dateutil.parser.parse(entry['started'])
+    days_ago = data.get('days_ago')
+
+    for r in reports:
+        if r['name'] == 'most_recent':
+            mr = data.get('most_recent_' + entry_type)
+            if not mr or mr < started:
+                data['most_recent_' + entry_type] = started
+        elif r['name'] == 'per_day':
+            if not days_ago:
+                days_ago = DBModel.now() - datetime.timedelta(days=r['days'])
+                data['days_ago'] = days_ago
+            count = data.get('days_count_' + entry_type, 0)
+            if started > days_ago:
+                count += 1
+                data['days_count_' + entry_type] = count
+        else:
+            raise ValueError('Invalid report type: ' + r['name'])
+
+
+def _report_summary(report_types, data):
+    report = {}
+    for entry_type, reports in report_types.iteritems():
+        for r in reports:
+            if r['name'] == 'most_recent':
+                key = 'most_recent_' + entry_type
+                report[r['label']] = data[key].isoformat()
+            if r['name'] == 'per_day':
+                key = 'days_count_' + entry_type
+                report[r['label']] = float(data[key]) / r['days']
+    return report
+
+
 def _baby_entries(db, id):
-    entries = list(db.entries(baby=id))
-    return jsonify({'entries': entries})
+    entries = []
+    report_types = app.config.get('REPORT_TYPES')
+    data = {'entry_types': {x['id']: x['label'] for x in db.entry_types()}}
+    for e in db.entries(baby=id):
+        if report_types:
+            _reporting_loop(report_types, data, e)
+        entries.append(e)
+    return jsonify(
+        {'entries': entries, 'reports': _report_summary(report_types, data)})
 
 
 @app.route('/api/v1/babies/<int:id>/entries/', methods=['GET'])

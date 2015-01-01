@@ -59,16 +59,10 @@ function on_stop(id) {
   });
 }
 
-$(document).ready(function() {
+function show_entries(entries) {
   var now = moment();
-  {% if most_recent_bottle %}
-  $('#last_bottle').text('Last Bottle: ' + moment('{{most_recent_bottle}}').fromNow());
-  {% endif %}
   $('#entries').dataTable( {
-    "ajax": {
-      "url": "/api/v1/babies/{{baby_id}}/entries/",
-      "dataSrc": "entries"
-    },
+    "data": entries,
     "columnDefs": [
       {
         "render": function (data, type, row) {
@@ -121,6 +115,31 @@ $(document).ready(function() {
     ],
     "order": [[ 1, "desc" ]]
   });
+}
+
+function show_reports(reports) {
+  $.each(reports, function(key, val) {
+    if (key.indexOf('Last ') == 0) {
+      $('#reports').append('<p>' + key + ': ' + moment(val).fromNow() + '</p>');
+    } else {
+      $('#reports').append('<p>' + key + ': ' + val + '</p>');
+    }
+  });
+}
+
+$(document).ready(function() {
+  $.ajax({
+    type: "GET",
+    url: "/api/v1/babies/{{baby_id}}/entries/",
+    contentType: "application/json; charset=utf-8",
+    success: function (result) {
+      show_reports(result.reports);
+      show_entries(result.entries);
+    },
+    error: function (xhr, ajaxOptions, thrownError) {
+      alert(xhr.statusText + ': ' + xhr.responseText);
+    }
+  });
 });
   </script>
 
@@ -151,12 +170,7 @@ $(document).ready(function() {
     {% endif %}
   {% endfor %}
   </p>
-  {% if most_recent_bottle %}
-  <p id='last_bottle'>
-  </p>
-  {% endif %}
-  <p>Bottles Per Day: {{'%0.1f' % bottles_per_day}}
-  </p>
+  <div id='reports'></div>
 </div>
 
 <div class="container" role="main">

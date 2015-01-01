@@ -10,3 +10,17 @@ if os.environ.get('DEBUG') == '1':
     DBNAME = 'tmp.db'
 
 DBNAME = os.path.join(_here, '../', DBNAME)
+
+REPORT_TYPES = {
+    'bottle': [
+        {
+            'name': 'most_recent',
+            'label': 'Last bottle',
+        },
+        {
+            'name': 'per_day',
+            'label': 'Bottles per day',
+            'days': 3,
+        },
+    ]
+}
