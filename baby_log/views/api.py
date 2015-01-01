@@ -44,6 +44,12 @@ def _reporting_loop(report_types, data, entry):
             if started > days_ago:
                 count += 1
                 data['days_count_' + entry_type] = count
+        elif r['name'] == 'long_interval':
+            last_entry = data.get('previous_' + entry_type)
+            if last_entry:
+                if (last_entry - started).total_seconds() > r['duration']:
+                    entry['long_interval'] = True
+            data['previous_' + entry_type] = started
         else:
             raise ValueError('Invalid report type: ' + r['name'])
 
@@ -55,7 +61,7 @@ def _report_summary(report_types, data):
             if r['name'] == 'most_recent':
                 key = 'most_recent_' + entry_type
                 report[r['label']] = data[key].isoformat()
-            if r['name'] == 'per_day':
+            elif r['name'] == 'per_day':
                 key = 'days_count_' + entry_type
                 report[r['label']] = float(data[key]) / r['days']
     return report

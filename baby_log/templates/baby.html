@@ -69,7 +69,11 @@ function show_entries(entries) {
           var lbl = entry_types[data]['label'];
           if (type != 'display' )
             return lbl;
-          return '<a href="entry/' + row.id + '/">' + lbl + '</a>';
+          lbl = '<a href="entry/' + row.id + '/">' + lbl + '</a>';
+	  if (row.long_interval) {
+	    lbl += ' <span class="glyphicon glyphicon-thumbs-up" title="long duration"></span>';
+	  }
+	  return lbl;
         },
         "targets": 0
       },

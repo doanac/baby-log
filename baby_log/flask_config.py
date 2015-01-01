@@ -22,5 +22,9 @@ REPORT_TYPES = {
             'label': 'Bottles per day',
             'days': 3,
         },
+        {
+            'name': 'long_interval',
+            'duration': 5 * 60 * 60,  # 5 hours in seconds
+        }
     ]
 }
