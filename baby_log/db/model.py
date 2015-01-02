@@ -87,10 +87,14 @@ class DBModel(object):
         ts = data.get('ended')
         if ts:
             data['ended'] = dateutil.parser.parse(ts).isoformat()
-        self._execute(stmt, data)
+        res = self._execute(stmt, data)
+        if res.rowcount != 1:
+            raise LookupError('No such entry: %d' % entry_id)
 
     def delete_entry(self, entry_id):
-        self._execute('DELETE FROM entries WHERE id=?', (entry_id,))
+        res = self._execute('DELETE FROM entries WHERE id=?', (entry_id,))
+        if res.rowcount != 1:
+            raise LookupError('No such entry: %d' % entry_id)
 
     def entries(self, order='DESC', order_by='started', **kwargs):
         stmt = 'SELECT id,baby,entry_type,started,ended from entries '

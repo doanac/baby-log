@@ -8,6 +8,11 @@ from baby_log import app
 from baby_log.db import DBModel
 
 
+@app.errorhandler(LookupError)
+def _LookupError_handler(error):
+    return str(error), 404
+
+
 @app.route('/api/v1/entry_types/', methods=['GET'])
 def entry_types():
     with DBModel.connect(app) as db:
