@@ -32,9 +32,9 @@ def db_migrate(app):
         migrations = os.path.join(_here, 'migrations')
         for m in sorted(os.listdir(migrations)):
             if m.endswith('.py') and m not in completed:
-                print 'Migrating: ' + m
+                print('Migrating: ' + m)
                 mod = imp.load_source('', os.path.join(migrations, m))
                 mod.migrate(app, db)
                 db._execute('INSERT INTO migrations values(?)', (m,))
             else:
-                print 'skipping %s' % m
+                print('skipping %s' % m)

@@ -56,7 +56,7 @@ def _reporting_loop(report_types, data, entry):
 
 def _report_summary(report_types, data):
     report = {}
-    for entry_type, reports in report_types.iteritems():
+    for entry_type, reports in report_types.items():
         for r in reports:
             if r['name'] == 'most_recent':
                 key = 'most_recent_' + entry_type
