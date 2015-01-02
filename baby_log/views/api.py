@@ -68,7 +68,10 @@ def _report_summary(report_types, data):
                 report[r['label']] = data[key].isoformat()
             elif r['name'] == 'per_day':
                 key = 'days_count_' + entry_type
-                report[r['label']] = float(data[key]) / r['days']
+                # get value with 1 decimal place
+                val = float(data[key]) / r['days']
+                val = float(int(val * 10)) / 10
+                report[r['label']] = val
     return report
 
 
