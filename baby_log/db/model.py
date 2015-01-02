@@ -83,10 +83,10 @@ class DBModel(object):
         stmt += ' WHERE id=%d' % entry_id
         ts = data.get('started')
         if ts:
-            data['started'] = dateutil.parser.parse(ts)
+            data['started'] = dateutil.parser.parse(ts).isoformat()
         ts = data.get('ended')
         if ts:
-            data['ended'] = dateutil.parser.parse(ts)
+            data['ended'] = dateutil.parser.parse(ts).isoformat()
         self._execute(stmt, data)
 
     def delete_entry(self, entry_id):
